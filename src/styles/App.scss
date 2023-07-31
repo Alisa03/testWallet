@@ -1,0 +1,118 @@
+@import './index.scss';
+
+@mixin flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.header {
+    padding: 10px 0;
+
+    &__container {
+        padding: 15px;
+        
+        background: $background;
+        border-radius: $radiusBlock;
+        
+        @include flex;
+        gap: 15px;
+    }
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+}
+
+.nav {
+    @include flex;
+    gap: 20px;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.main {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+
+    text-align: center;
+}
+
+.block {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.form {       
+    display: flex; 
+    align-items: flex-start;
+    flex-direction: column; 
+    gap: 10px;
+
+    width: 60%;
+
+    &__label {
+        margin-bottom: -5px
+    }
+
+    &__input {
+        height: calc(2.25rem + 2px);
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+
+        background: $background;
+        border: 3px solid $border;
+        border-radius: 10px;
+
+        color: $color;
+        font-family: 'Roboto';
+
+        &:focus {
+            border-color: #9c9c9c;
+        }
+    }
+}
+
+.btn {
+    color: $color; 
+    background: $accent;
+    padding: 12px 22px;
+    border-radius: 10px;
+    cursor: pointer;  
+
+    &[disabled] {
+        background: #00335c;
+        cursor: auto;
+    }
+}
+
+._error {border-color: #740000}
+
+@media (max-width: 450px) {
+    .container {width: 90%}
+
+    .logo {
+        width: 45px;
+        height: 45px;
+    }
+
+    .form {width: 80%}
+}
+
+@media (max-width: 376px) {
+    .container {width: 95%}
+
+    .logo {
+        width: 35px;
+        height: 35px;
+    }
+
+    .form {width: 100%}
+}
