@@ -1,37 +1,35 @@
-import { parseEther } from "ethers"
 import { useEffect, useState } from "react"
+import { parseEther } from "ethers"
 import { useDebounce } from "use-debounce"
-import { useConnect, usePrepareSendTransaction, useSendTransaction, useWaitForTransaction } from "wagmi"
+import { useAccount, usePrepareSendTransaction, useSendTransaction, useWaitForTransaction } from "wagmi"
+
 import History from "./History"
 
 export default function Transaction() {
-    const [error, setError] = useState(false)
+    const { connector: activeConnector, isConnected } = useAccount()
 
-    const { connect, connectors, pendingConnector } = useConnect()
-
-    // адрес кому
+    // to 
     const [to, setTo] = useState('')
     const [debouncedTo] = useDebounce(to, 500)
 
-    // сумма 
+    // value
     const [amount, setAmount] = useState('')
     const [debouncedAmount] = useDebounce(amount, 500)
+    const [errorAmount, setErrorAmount] = useState(false)
 
-    // подготовка транзакции
+    // Transaction
     const { config, isError } = usePrepareSendTransaction({
         to: debouncedTo,
         value: (debouncedAmount && !isNaN(Number(debouncedAmount))) ? parseEther(debouncedAmount) : undefined,
     })
 
+    // error amount
     useEffect(() => {
-        setError(isNaN(Number(debouncedAmount)))
+        setErrorAmount(isNaN(Number(debouncedAmount)))
     }, [debouncedAmount])
 
-
-    // транзакция и данные 
     const { data, sendTransaction } = useSendTransaction(config)
 
-    // загрузка и успешно ли
     const { isLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
     })
@@ -46,7 +44,6 @@ export default function Transaction() {
                     setTo('')
                     setAmount('')
                 }}>
-                {/* адрес */}
                 <label className='from__label'>Recipient</label>
                 <input
                     aria-label="Recipient"
@@ -55,20 +52,20 @@ export default function Transaction() {
                     value={to}
                     className={isError ? 'form__input _error' : 'form__input'}
                 />
-                {/* сумма */}
                 <label className='from__label'>Amount (ether)</label>
                 <input
                     aria-label="Amount (ether)"
                     placeholder="0.05"
                     onChange={(e) => setAmount(e.target.value)}
                     value={amount}
-                    className={error ? 'form__input _error' : 'form__input'}
+                    className={errorAmount || isError ? 'form__input _error' : 'form__input'}
                 />
-                <button className="btn" disabled={!to || !amount || error || isError || !connect}>{isLoading ? 'Loading...' : 'Send'}</button>
+                <button className="btn" disabled={!to || !amount || errorAmount || isError || !isConnected}>{isLoading ? 'Loading...' : 'Send'}</button>
             </form>
+
             <p>{isSuccess && 'Successfully sent'}</p>
-            <p>{isError && 'Error: data entered incorrectly'}</p>
-            {/* история транзакций */}
+            <p>{isError && 'Error: Wrong input data or insufficient funds'}</p>
+
             <History hash={data?.hash} />
         </main>
     )

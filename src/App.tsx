@@ -1,9 +1,10 @@
 import { Web3Modal } from '@web3modal/react'
-import { useState } from 'react'
 import { WagmiConfig } from 'wagmi'
+
+import { ethereumClient, projectId, wagmiConfig } from './config'
+
 import Navbar from './components/Navbar'
 import Transaction from './components/Transaction'
-import { ethereumClient, projectId, wagmiConfig } from './config'
 
 import './styles/App.scss'
 
